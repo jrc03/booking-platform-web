@@ -2,7 +2,8 @@ import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
 const api = axios.create({
-  baseURL: "http://localhost:5053/api",
+  // Use Vite's environment variables. Fallback to localhost if not set.
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5053/api",
   headers: {
     "Content-Type": "application/json",
   },
