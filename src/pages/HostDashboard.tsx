@@ -1,0 +1,1 @@
+export const HostDashboard = () => <h1>🛠️ Host Dashboard (Private: Host Only)</h1>;

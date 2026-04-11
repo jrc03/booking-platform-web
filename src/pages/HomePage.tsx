@@ -1,0 +1,1 @@
+export const HomePage = () => <h1>🏠 Home Page (Public) - Search properties here</h1>;

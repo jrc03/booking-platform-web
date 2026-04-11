@@ -1,0 +1,1 @@
+export const GuestProfile = () => <h1>🎒 Guest Profile (Private: Guest Only)</h1>;
