@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { authService } from "../api/authService";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import {
   type RegisterField,
   validateRegisterField,
@@ -9,6 +9,7 @@ import {
 } from "../utils/authValidation";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
+import { useAuthStore } from "../store/authStore";
 
 export const RegisterPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -20,6 +21,9 @@ export const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const isHost: boolean = false;
+
+  const { isAuthenticated } = useAuthStore();
+  if (isAuthenticated) return <Navigate to="/" replace />;
 
   const handleBlur = (field: RegisterField, value: string) => {
     const message = validateRegisterField(field, value, password);

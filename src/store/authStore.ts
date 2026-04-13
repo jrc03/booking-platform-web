@@ -24,12 +24,14 @@ const getInitialState = () => {
     const decoded = jwtDecode<DecodedToken>(token);
 
     // Token 'exp' is in seconds; Date.now() is in milliseconds
-    if (decoded.exp * 1000 < Date.now()) {
+    const now = Date.now();
+    if (decoded.exp && decoded.exp * 1000 < now) {
+      console.warn("Token initially expired, removing...");
       localStorage.removeItem("token");
       return { token: null, user: null, isAuthenticated: false };
     }
 
-    const roleClaim = decoded[ClaimTypes.Role];
+    const roleClaim = decoded[ClaimTypes.Role] || decoded.role;
     const roles = Array.isArray(roleClaim)
       ? roleClaim
       : roleClaim
@@ -37,13 +39,14 @@ const getInitialState = () => {
         : [];
 
     const user: User = {
-      id: decoded[ClaimTypes.NameIdentifier],
-      email: decoded[ClaimTypes.Email],
+      id: decoded[ClaimTypes.NameIdentifier] || decoded.sub || "",
+      email: decoded[ClaimTypes.Email] || decoded.email || "",
       roles: roles,
     };
 
     return { token, user, isAuthenticated: true };
-  } catch {
+  } catch (error) {
+    console.error("AuthStore getInitialState error:", error);
     localStorage.removeItem("token");
     return { token: null, user: null, isAuthenticated: false };
   }
@@ -60,7 +63,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const decoded = jwtDecode<DecodedToken>(token);
 
-      const roleClaim = decoded[ClaimTypes.Role];
+      const roleClaim = decoded[ClaimTypes.Role] || decoded.role;
       const roles = Array.isArray(roleClaim)
         ? roleClaim
         : roleClaim
@@ -68,8 +71,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           : [];
 
       const user: User = {
-        id: decoded[ClaimTypes.NameIdentifier],
-        email: decoded[ClaimTypes.Email],
+        id: decoded[ClaimTypes.NameIdentifier] || decoded.sub || "",
+        email: decoded[ClaimTypes.Email] || decoded.email || "",
         roles: roles,
       };
 

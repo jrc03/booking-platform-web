@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { validateLoginField, validateLoginForm } from "../utils/authValidation";
 import { authService } from "../api/authService";
@@ -15,8 +15,11 @@ export const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, isAuthenticated } = useAuthStore();
 
+  if (isAuthenticated) return <Navigate to="/" replace />;
+
+  
   const handleBlur = (field: "email" | "password", value: string) => {
     const message = validateLoginField(field, value);
     setErrors((prev) => ({ ...prev, [field]: message }));
@@ -37,7 +40,6 @@ export const LoginPage = () => {
 
     try {
       const response = await authService.login({ email, password });
-
       const token = response.token;
 
       if (!token || typeof token !== "string") {
@@ -50,25 +52,33 @@ export const LoginPage = () => {
       if (axios.isAxiosError(error)) {
         // Handle ASP.NET Core ProblemDetails or custom objects
         const backendData = error.response?.data;
-        
-        const backendMessage = 
-          backendData?.message || 
-          backendData?.error || 
-          backendData?.detail || 
-          backendData?.title || 
-          (typeof backendData === 'string' ? backendData : undefined);
+
+        const backendMessage =
+          backendData?.message ||
+          backendData?.error ||
+          backendData?.detail ||
+          backendData?.title ||
+          (typeof backendData === "string" ? backendData : undefined);
 
         if (error.response?.status === 401) {
           // If the backend tells us it's an email confirmation issue, show it on the email field
-          if (backendMessage && backendMessage.toLowerCase().includes("confirm")) {
+          if (
+            backendMessage &&
+            backendMessage.toLowerCase().includes("confirm")
+          ) {
             setErrors({ email: backendMessage });
           } else {
             // Otherwise, bind the 401 directly to the password field
-            setErrors({ password: backendMessage || "Email or password is incorrect" });
+            setErrors({
+              password: backendMessage || "Email or password is incorrect",
+            });
           }
         } else if (error.response?.status === 403) {
           // Bind the 403 directly to the email field
-          setErrors({ email: backendMessage || "Please confirm your email before logging in" });
+          setErrors({
+            email:
+              backendMessage || "Please confirm your email before logging in",
+          });
         } else {
           // Fallback missing data error block
           setErrors({
