@@ -26,8 +26,11 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Only handle global 401s if it's NOT a login request
+    const isLoginEndpoint = error.config?.url?.includes("/users/login");
+
     if (error.response) {
-      if (error.response.status === 401) {
+      if (error.response.status === 401 && !isLoginEndpoint) {
         console.warn("Unauthorized! Token expired or invalid.");
         useAuthStore.getState().logout();
       } else if (error.response.status === 403) {

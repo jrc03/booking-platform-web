@@ -48,17 +48,32 @@ export const LoginPage = () => {
       navigate("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        // Handle ASP.NET Core ProblemDetails or custom objects
+        const backendData = error.response?.data;
+        
+        const backendMessage = 
+          backendData?.message || 
+          backendData?.error || 
+          backendData?.detail || 
+          backendData?.title || 
+          (typeof backendData === 'string' ? backendData : undefined);
+
         if (error.response?.status === 401) {
-          // Bind the 401 directly to the password field
-          setErrors({ password: "Email or password is incorrect" });
+          // If the backend tells us it's an email confirmation issue, show it on the email field
+          if (backendMessage && backendMessage.toLowerCase().includes("confirm")) {
+            setErrors({ email: backendMessage });
+          } else {
+            // Otherwise, bind the 401 directly to the password field
+            setErrors({ password: backendMessage || "Email or password is incorrect" });
+          }
         } else if (error.response?.status === 403) {
           // Bind the 403 directly to the email field
-          setErrors({ email: "Please confirm your email before logging in" });
+          setErrors({ email: backendMessage || "Please confirm your email before logging in" });
         } else {
           // Fallback missing data error block
           setErrors({
             general:
-              error.response?.data?.message ||
+              backendMessage ||
               "An unexpected error occurred. Please try again",
           });
         }
