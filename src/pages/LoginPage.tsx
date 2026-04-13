@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import api from "../api/axios";
-import axios from "axios";
 import { validateLoginField, validateLoginForm } from "../utils/authValidation";
+import { authService } from "../api/authService";
+import axios from "axios";
 
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
@@ -36,10 +36,9 @@ export const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await api.post("/users/login", { email, password });
+      const response = await authService.login({ email, password });
 
-      const token =
-        response.data.token || response.data.accessToken || response.data;
+      const token = response.token;
 
       if (!token || typeof token !== "string") {
         throw new Error("Invalid token received from server");
@@ -57,12 +56,18 @@ export const LoginPage = () => {
           setErrors({ email: "Please confirm your email before logging in" });
         } else {
           // Fallback missing data error block
-          setErrors({ general: error.response?.data?.message || "An unexpected error occurred. Please try again" });
+          setErrors({
+            general:
+              error.response?.data?.message ||
+              "An unexpected error occurred. Please try again",
+          });
         }
       } else if (error instanceof Error) {
         setErrors({ general: error.message });
       } else {
-        setErrors({ general: "An unexpected error occurred. Please try again." });
+        setErrors({
+          general: "An unexpected error occurred. Please try again.",
+        });
       }
     } finally {
       setIsLoading(false);

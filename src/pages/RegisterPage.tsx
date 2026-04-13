@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../api/axios";
+import { authService } from "../api/authService";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import {
@@ -19,11 +19,9 @@ export const RegisterPage = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const isHost: boolean = false;
 
-  const handleBlur = (
-    field: RegisterField,
-    value: string
-  ) => {
+  const handleBlur = (field: RegisterField, value: string) => {
     const message = validateRegisterField(field, value, password);
     setErrors((prev) => ({ ...prev, [field]: message }));
   };
@@ -36,24 +34,26 @@ export const RegisterPage = () => {
       lastName,
       email,
       password,
-      confirmPassword
+      confirmPassword,
     );
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return; // ✅ isLoading never started, safe to return
+      return;
     }
 
     setErrors({});
-    setIsLoading(true); // ✅ only runs after validation passes
+    setIsLoading(true);
 
     try {
-      await api.post("/users/register", {
+      await authService.register({
         firstName,
         lastName,
         email,
         password,
+        isHost,
       });
+
       setSuccess(true);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
