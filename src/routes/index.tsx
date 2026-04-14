@@ -7,7 +7,7 @@ import { RegisterPage } from "../pages/RegisterPage";
 import { HostDashboard } from "../pages/HostDashboard";
 import { GuestProfile } from "../pages/GuestProfile";
 import { AppLayout } from "../components/layout/AppLayout";
-
+import { CreatePropertyPage } from "../pages/CreatePropertyPage";
 // 2. THE ROUTER CONFIGURATION
 export const router = createBrowserRouter([
   // --- AUTH ROUTES ---
@@ -27,6 +27,13 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute requireRole="Guest" />,
         children: [{ path: "/guest/profile", element: <GuestProfile /> }],
+      },
+      {
+        element: <ProtectedRoute requireRole="Host" />,
+        children: [
+          { path: "/host/dashboard", element: <HostDashboard /> },
+          { path: "/host/properties/new", element: <CreatePropertyPage /> },
+        ],
       },
     ],
   },
