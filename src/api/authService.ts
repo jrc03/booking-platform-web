@@ -15,7 +15,7 @@ export const authService = {
     );
     return response.data;
   },
-  
+
   register: async (
     payload: RegisterRequestDto,
   ): Promise<AuthenticationResponseDto> => {
@@ -25,5 +25,8 @@ export const authService = {
     );
 
     return response.data;
+  },
+  becomeHost: async (): Promise<void> => {
+    await api.post("users/become-host");
   },
 };
