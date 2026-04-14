@@ -8,16 +8,14 @@ import PropertyCard from "../components/properties/PropertyCard";
 import PropertySearch from "../components/properties/PropertySearch";
 
 export const HomePage = () => {
-  // State for our property UI
   const [properties, setProperties] = useState<PropertyResponseDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
 
-  // 1. Initial Load: Fetch properties using the safe, paginated /search endpoint
   useEffect(() => {
     const fetchInitialProperties = async () => {
       try {
-        const data = await propertyService.search(); // <-- Sends empty object, C# handles pagination!
+        const data = await propertyService.search();
         setProperties(data);
       } catch (error) {
         console.error("Failed to fetch initial properties:", error);
@@ -29,11 +27,10 @@ export const HomePage = () => {
     fetchInitialProperties();
   }, []);
 
-  // 2. When the user uses the Search Bar
   const handleSearch = async (criteria: SearchPropertyQuery) => {
     setIsSearching(true);
     try {
-      const data = await propertyService.search(criteria); // <-- Sends the filters!
+      const data = await propertyService.search(criteria);
       setProperties(data);
     } catch (error) {
       console.error("Failed to search properties:", error);
@@ -56,7 +53,6 @@ export const HomePage = () => {
           Discover unique homes, apartments, and rooms for your perfect trip.
         </p>
 
-        {/* Our new smart Search Bar component! */}
         <div className="relative -bottom-12 z-10 w-full max-w-4xl mx-auto">
           <PropertySearch onSearch={handleSearch} isLoading={isSearching} />
         </div>
@@ -81,7 +77,6 @@ export const HomePage = () => {
               No properties found matching your search.
             </div>
           ) : (
-            // Our beautiful new Property Cards!
             properties.map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))
