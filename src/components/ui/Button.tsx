@@ -11,7 +11,7 @@ const Button = ({ children, isLoading, disabled, className, ...props }: ButtonPr
   return (
     <button
       disabled={isDisabled}
-      className={`w-full py-3 text-sm tracking-widest uppercase font-medium rounded-none transition-all duration-200 ${
+      className={`w-full py-3 px-8 text-sm tracking-widest uppercase font-medium rounded-none transition-all duration-200 flex items-center justify-center gap-2 ${
         isDisabled
           ? "bg-stone-300 text-stone-400 cursor-not-allowed"
           : "bg-stone-900 text-stone-50 hover:bg-stone-700 active:scale-[0.99]"
