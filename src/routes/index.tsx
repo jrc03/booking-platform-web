@@ -1,36 +1,33 @@
-import { createBrowserRouter } from 'react-router-dom';
-import { ProtectedRoute } from '../components/ProtectedRoute';
+import { createBrowserRouter } from "react-router-dom";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
-// 1. TEMPORARY PLACEHOLDERS
-import { HomePage } from '../pages/HomePage';
-import { LoginPage } from '../pages/LoginPage';
-import { RegisterPage } from '../pages/RegisterPage';
-import { HostDashboard } from '../pages/HostDashboard';
-import { GuestProfile } from '../pages/GuestProfile';
+import { HomePage } from "../pages/HomePage";
+import { LoginPage } from "../pages/LoginPage";
+import { RegisterPage } from "../pages/RegisterPage";
+import { HostDashboard } from "../pages/HostDashboard";
+import { GuestProfile } from "../pages/GuestProfile";
+import { AppLayout } from "../components/layout/AppLayout";
 
 // 2. THE ROUTER CONFIGURATION
 export const router = createBrowserRouter([
-  // --- PUBLIC ROUTES ---
-  { path: '/', element: <HomePage /> },
-  { path: '/login', element: <LoginPage /> },
-  { path: '/register', element: <RegisterPage /> },
+  // --- AUTH ROUTES ---
+  { path: "/login", element: <LoginPage /> },
+  { path: "/register", element: <RegisterPage /> },
 
-  // --- HOST PROTECTED ROUTES ---
-  // Notice how we wrap multiple routes inside our Bouncer!
-  { 
-    element: <ProtectedRoute requireRole="Host" />,
+  // --- APP ROUTES ---
+  {
+    element: <AppLayout />,
     children: [
-      { path: '/host/dashboard', element: <HostDashboard /> },
-      // Later: { path: '/host/properties/new', element: <CreateProperty /> }
-    ]
+      { path: "/", element: <HomePage /> },
+
+      {
+        element: <ProtectedRoute requireRole="Host" />,
+        children: [{ path: "/host/dashboard", element: <HostDashboard /> }],
+      },
+      {
+        element: <ProtectedRoute requireRole="Guest" />,
+        children: [{ path: "/guest/profile", element: <GuestProfile /> }],
+      },
+    ],
   },
-
-  // --- GUEST PROTECTED ROUTES ---
-  { 
-    element: <ProtectedRoute requireRole="Guest" />,
-    children: [
-      { path: '/guest/profile', element: <GuestProfile /> },
-      // Later: { path: '/guest/bookings', element: <GuestBookings /> }
-    ]
-  }
 ]);
