@@ -1,12 +1,12 @@
-import { type InputHTMLAttributes, type ReactNode } from "react";
+import type { ReactNode, TextareaHTMLAttributes } from "react";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string;
   error?: string;
   icon?: ReactNode;
 }
 
-const Input = ({ label, id, error, icon, ...props }: InputProps) => {
+const TextArea = ({ label, id, error, icon, ...props }: TextAreaProps) => {
   return (
     <div className="space-y-1.5 pt-1">
       <label
@@ -16,17 +16,17 @@ const Input = ({ label, id, error, icon, ...props }: InputProps) => {
         {label}
       </label>
       <div className="relative">
-        <input
+        <textarea
           id={id}
-          className={`w-full ${icon ? "pl-8" : "px-0"} py-2.5 bg-transparent border-b text-stone-800 text-sm font-light placeholder:text-stone-300 focus:outline-none transition-colors duration-200 ${
+          className={`w-full ${icon ? "pl-8" : "px-4"} py-3 bg-stone-50 border rounded-xl focus:ring-2 focus:ring-stone-900 focus:border-stone-900 transition-colors placeholder:text-stone-400 font-light text-stone-800 resize-none ${
             error
               ? "border-red-500 focus:border-red-700"
-              : "border-stone-300 focus:border-stone-700"
+              : "border-stone-200"
           } ${props.className || ""}`}
           {...props}
         />
         {icon && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none">
+          <div className="absolute left-2 top-3.5 text-stone-400 pointer-events-none">
             {icon}
           </div>
         )}
@@ -38,4 +38,4 @@ const Input = ({ label, id, error, icon, ...props }: InputProps) => {
   );
 };
 
-export default Input;
+export default TextArea;
