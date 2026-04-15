@@ -13,6 +13,7 @@ import {
   validatePropertyForm,
   type PropertyField,
 } from "../utils/propertyValidation";
+import { PageHeader } from "../components/layout/PageHeader";
 
 export const CreatePropertyPage = () => {
   const navigate = useNavigate();
@@ -98,17 +99,11 @@ export const CreatePropertyPage = () => {
   };
   return (
     <div className="max-w-3xl mx-auto px-6 py-12 animate-fade-in">
-      <div className="mb-10">
-        <h1
-          className="text-4xl text-stone-900 font-medium"
-          style={{ fontFamily: "'Cormorant Garamond', serif" }}
-        >
-          Host a new property
-        </h1>
-        <p className="text-stone-500 font-light mt-2">
-          Fill out the details below to start renting out your space.
-        </p>
-      </div>
+      <PageHeader
+        title="Host a new property"
+        subtitle="Fill out the details below to start renting out your space."
+      />
+
       <form
         onSubmit={handleSubmit}
         className="space-y-8 bg-white p-8 rounded-3xl border border-stone-100 shadow-sm"
@@ -124,7 +119,7 @@ export const CreatePropertyPage = () => {
               setFormData({ ...formData, title: e.target.value });
               setErrors((prev) => ({ ...prev, title: "" }));
             }}
-            onBlur={(e)=> handleBlur("title", e.target.value)}
+            onBlur={(e) => handleBlur("title", e.target.value)}
             error={errors.title}
             required
           />
