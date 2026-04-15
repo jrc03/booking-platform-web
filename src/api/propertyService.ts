@@ -1,4 +1,7 @@
-import type { PropertyResponseDto, UpsertPropertyRequestDto } from "../types/dtos";
+import type {
+  PropertyResponseDto,
+  UpsertPropertyRequestDto,
+} from "../types/dtos";
 import api from "./axios";
 
 export interface SearchPropertyQuery {
@@ -12,11 +15,15 @@ export interface SearchPropertyQuery {
 }
 
 export const propertyService = {
-
-  search: async (query?: SearchPropertyQuery): Promise<PropertyResponseDto[]> => {
-    const response = await api.get<PropertyResponseDto[]>("/properties/search", {
-      params: query || {}
-    });
+  search: async (
+    query?: SearchPropertyQuery,
+  ): Promise<PropertyResponseDto[]> => {
+    const response = await api.get<PropertyResponseDto[]>(
+      "/properties/search",
+      {
+        params: query || {},
+      },
+    );
     return response.data;
   },
 
@@ -25,8 +32,30 @@ export const propertyService = {
     const response = await api.get<PropertyResponseDto>(`/properties/${id}`);
     return response.data;
   },
-  create: async (payload: UpsertPropertyRequestDto): Promise<PropertyResponseDto> => {
-    const response = await api.post<PropertyResponseDto>("/properties", payload);
+  create: async (
+    payload: UpsertPropertyRequestDto,
+  ): Promise<PropertyResponseDto> => {
+    const response = await api.post<PropertyResponseDto>(
+      "/properties",
+      payload,
+    );
     return response.data;
-  }
+  },
+  getMyProperties: async (): Promise<PropertyResponseDto[]> => {
+    const response = await api.get<PropertyResponseDto[]>("/properties/my");
+    return response.data;
+  },
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/properties/${id}`);
+  },
+  update: async (
+    id: string,
+    payload: UpsertPropertyRequestDto,
+  ): Promise<PropertyResponseDto> => {
+    const response = await api.put<PropertyResponseDto>(
+      `/properties/${id}`,
+      payload,
+    );
+    return response.data;
+  },
 };
