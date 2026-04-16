@@ -54,7 +54,7 @@ export const propertyService = {
   ): Promise<PropertyResponseDto> => {
     const response = await api.put<PropertyResponseDto>(
       `/properties/${id}`,
-      payload,
+      { id, ...payload },
     );
     return response.data;
   },

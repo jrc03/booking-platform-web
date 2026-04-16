@@ -9,6 +9,7 @@ import { GuestProfile } from "../pages/GuestProfile";
 import { AppLayout } from "../components/layout/AppLayout";
 import { CreatePropertyPage } from "../pages/CreatePropertyPage";
 import { PropertyPage } from "../pages/PropertyPage";
+import { BookingPage } from "../pages/BookingPage";
 
 // 2. THE ROUTER CONFIGURATION
 export const router = createBrowserRouter([
@@ -23,18 +24,18 @@ export const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "/property/:id", element: <PropertyPage /> },
       {
-        element: <ProtectedRoute requireRole="Host" />,
-        children: [{ path: "/host/dashboard", element: <HostDashboard /> }],
-      },
-      {
         element: <ProtectedRoute requireRole="Guest" />,
-        children: [{ path: "/guest/profile", element: <GuestProfile /> }],
+        children: [
+          { path: "/guest/profile", element: <GuestProfile /> },
+          { path: "/property/:id/book", element: <BookingPage /> },
+        ],
       },
       {
         element: <ProtectedRoute requireRole="Host" />,
         children: [
           { path: "/host/dashboard", element: <HostDashboard /> },
           { path: "/host/properties/new", element: <CreatePropertyPage /> },
+          { path: "/host/properties/:id/edit", element: <CreatePropertyPage /> },
         ],
       },
     ],

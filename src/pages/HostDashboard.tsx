@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { PropertyResponseDto } from "../types/dtos";
 import { propertyService } from "../api/propertyService";
 import { toast } from "sonner";
-import { Plus, MapPin, Users, DollarSign, Trash2 } from "lucide-react";
+import { Plus, MapPin, Users, DollarSign, Trash2, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PageHeader } from "../components/layout/PageHeader";
 import Button from "../components/ui/Button";
@@ -118,13 +118,22 @@ export const HostDashboard = () => {
                       /night
                     </span>
                   </span>
-                  <button
-                    onClick={() => setDeleteId(property.id)}
-                    className="p-2 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Delete property"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <Link
+                      to={`/host/properties/${property.id}/edit`}
+                      className="p-2 text-stone-400 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+                      title="Edit property"
+                    >
+                      <Pencil size={16} />
+                    </Link>
+                    <button
+                      onClick={() => setDeleteId(property.id)}
+                      className="p-2 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Delete property"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

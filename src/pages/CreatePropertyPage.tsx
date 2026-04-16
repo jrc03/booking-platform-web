@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { uploadImageToCloudinary } from "../utils/cloudinary";
 import { propertyService } from "../api/propertyService";
@@ -17,9 +17,13 @@ import { PageHeader } from "../components/layout/PageHeader";
 
 export const CreatePropertyPage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
+
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState({
@@ -29,6 +33,31 @@ export const CreatePropertyPage = () => {
     pricePerNight: "",
     capacity: "",
   });
+
+  // Fetch existing property data if in edit mode
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchProperty = async () => {
+      try {
+        const data = await propertyService.getById(id);
+        setFormData({
+          title: data.title,
+          description: data.description,
+          location: data.location,
+          pricePerNight: String(data.pricePerNight),
+          capacity: String(data.capacity),
+        });
+        setPreviewUrls(data.imageUrls);
+        setExistingImageUrls(data.imageUrls);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load property.");
+      }
+    };
+
+    fetchProperty();
+  }, [id]);
 
   const handleBlur = (field: PropertyField, value: string) => {
     const message = validatePropertyField(field, value);
@@ -60,29 +89,41 @@ export const CreatePropertyPage = () => {
       setErrors(validationErrors);
       return;
     }
-    if (files.length === 0) {
+    if (files.length === 0 && existingImageUrls.length === 0) {
       toast.error("You must upload at least one photo of your property.");
       return;
     }
     try {
       setIsLoading(true);
-      toast.loading(`Uploading ${files.length} images...`, {
-        id: "upload-toast",
-      });
-      const uploadPromises = files.map((file) => uploadImageToCloudinary(file));
-      const imageUrls = await Promise.all(uploadPromises);
+
+      // Upload new files to Cloudinary (if any were selected)
+      let imageUrls = existingImageUrls;
+      if (files.length > 0) {
+        toast.loading(`Uploading ${files.length} images...`, {
+          id: "upload-toast",
+        });
+        const uploadPromises = files.map((file) => uploadImageToCloudinary(file));
+        imageUrls = await Promise.all(uploadPromises);
+      }
 
       toast.loading("Saving property...", { id: "upload-toast" });
 
-      await propertyService.create({
+      const payload = {
         title: formData.title,
         description: formData.description,
         location: formData.location,
         pricePerNight: Number(formData.pricePerNight),
         capacity: Number(formData.capacity),
         imageUrls: imageUrls,
-      });
-      toast.success("Property created successfully!", { id: "upload-toast" });
+      };
+
+      if (isEditMode) {
+        await propertyService.update(id!, payload);
+        toast.success("Property updated!", { id: "upload-toast" });
+      } else {
+        await propertyService.create(payload);
+        toast.success("Property created!", { id: "upload-toast" });
+      }
       navigate("/host/dashboard");
     } catch (error) {
       console.error("Property creation error:", error);
@@ -100,8 +141,12 @@ export const CreatePropertyPage = () => {
   return (
     <div className="max-w-3xl mx-auto px-6 py-12 animate-fade-in">
       <PageHeader
-        title="Host a new property"
-        subtitle="Fill out the details below to start renting out your space."
+        title={isEditMode ? "Edit property" : "Host a new property"}
+        subtitle={
+          isEditMode
+            ? "Update your listing details."
+            : "Fill out the details below to start renting out your space."
+        }
       />
 
       <form
@@ -239,7 +284,7 @@ export const CreatePropertyPage = () => {
             className="w-full flex items-center justify-center gap-2"
           >
             <Home size={18} />
-            Publish Property
+            {isEditMode ? "Save Changes" : "Publish Property"}
           </Button>
         </div>
       </form>
