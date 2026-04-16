@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { PropertyResponseDto } from "../../types/dtos";
 
 interface PropertyCardProps {
@@ -6,7 +7,7 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property }: PropertyCardProps) {
   return (
-    <div className="bg-white border flex flex-col items-start border-stone-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 text-left cursor-pointer group">
+    <Link to={`/property/${property.id}`} className="bg-white border flex flex-col items-start border-stone-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 text-left cursor-pointer group">
       {/* 2. IMAGE BOX: check if the backend gave an image. If not, show a fallback. */}
       <div className="w-full h-56 bg-stone-200 relative overflow-hidden">
         {property.imageUrls && property.imageUrls.length > 0 ? (
@@ -43,6 +44,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           <span className="text-stone-500 text-xs font-light">per night</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
