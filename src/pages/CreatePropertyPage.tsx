@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { uploadImageToCloudinary } from "../utils/cloudinary";
 import { propertyService } from "../api/propertyService";
-import axios from "axios";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import Button from "../components/ui/Button";
 import { DollarSign, Home, MapPin, UploadCloud, Users } from "lucide-react";
 import Input from "../components/ui/Input";
@@ -127,13 +127,7 @@ export const CreatePropertyPage = () => {
       navigate("/host/dashboard");
     } catch (error) {
       console.error("Property creation error:", error);
-      let errorMessage = "Failed to create property";
-      if (axios.isAxiosError(error) && error.response) {
-        errorMessage = error.response.data?.message || errorMessage;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      toast.error(errorMessage, { id: "upload-toast" });
+      toast.error(getApiErrorMessage(error, "Failed to save property."), { id: "upload-toast" });
     } finally {
       setIsLoading(false);
     }

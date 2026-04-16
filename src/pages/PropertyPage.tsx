@@ -1,34 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { propertyService } from "../api/propertyService";
-import type { PropertyResponseDto } from "../types/dtos";
 import { MapPin, Users, Loader2, ArrowLeft, SearchX } from "lucide-react";
-import { toast } from "sonner";
 import Button from "../components/ui/Button";
 import { useAuthStore } from "../store/authStore";
+import { useProperty } from "../hooks/useProperty";
 
 export const PropertyPage = () => {
   const { id } = useParams();
-  const [property, setProperty] = useState<PropertyResponseDto | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { property, isLoading } = useProperty(id);
   const [selectedImage, setSelectedImage] = useState(0);
 
   const { isAuthenticated } = useAuthStore();
-
-  useEffect(() => {
-    const fetchProperty = async () => {
-      try {
-        const data = await propertyService.getById(id!);
-        setProperty(data);
-      } catch (error) {
-        console.error("Error fetching property:", error);
-        toast.error("Failed to load property");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProperty();
-  }, [id]);
 
   if (isLoading) {
     return (
