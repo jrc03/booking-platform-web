@@ -4,12 +4,16 @@ import { propertyService } from "../api/propertyService";
 import type { PropertyResponseDto } from "../types/dtos";
 import { MapPin, Users, Loader2, ArrowLeft, SearchX } from "lucide-react";
 import { toast } from "sonner";
+import Button from "../components/ui/Button";
+import { useAuthStore } from "../store/authStore";
 
 export const PropertyPage = () => {
   const { id } = useParams();
   const [property, setProperty] = useState<PropertyResponseDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -132,9 +136,24 @@ export const PropertyPage = () => {
             </span>
             <span className="text-stone-400 font-light text-sm">/ night</span>
           </div>
-          <div className="pt-4 border-t border-stone-100 text-sm text-stone-400 font-light text-center">
-            Booking coming soon...
-          </div>
+          {isAuthenticated ? (
+            <Link to={`/property/${property.id}/book`}>
+              <Button type="button" className="w-full">
+                Book Now
+              </Button>
+            </Link>
+          ) : (
+            <div className="text-center space-y-3 pt-2">
+              <p className="text-sm text-stone-400 font-light">
+                Sign in to book this property
+              </p>
+              <Link to="/login">
+                <Button type="button" className="w-full">
+                  Sign In
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
