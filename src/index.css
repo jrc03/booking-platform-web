@@ -7,3 +7,24 @@ body {
 .font-display {
     font-family: 'Cormorant Garamond', serif;
 }
+
+/* ---- Availability Calendar (react-day-picker) ---- */
+.rdp-custom .rdp-root {
+    --rdp-accent-color: var(--color-stone-900);
+    --rdp-accent-background-color: var(--color-stone-100);
+    --rdp-today-color: var(--color-stone-900);
+    --rdp-day-height: 48px;
+    --rdp-day-width: 48px;
+    font-family: 'Jost', sans-serif;
+}
+
+.rdp-custom .rdp-disabled:not(.rdp-today) {
+    background-color: var(--color-stone-100);
+    color: var(--color-stone-400);
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.rdp-custom .rdp-today {
+    font-weight: 600;
+}

@@ -52,9 +52,17 @@ export const propertyService = {
     id: string,
     payload: UpsertPropertyRequestDto,
   ): Promise<PropertyResponseDto> => {
-    const response = await api.put<PropertyResponseDto>(
-      `/properties/${id}`,
-      { id, ...payload },
+    const response = await api.put<PropertyResponseDto>(`/properties/${id}`, {
+      id,
+      ...payload,
+    });
+    return response.data;
+  },
+  getUnavailableDates: async (
+    id: string,
+  ): Promise<{ startDate: string; endDate: string }[]> => {
+    const response = await api.get<{ startDate: string; endDate: string }[]>(
+      `/properties/${id}/unavailable-dates`,
     );
     return response.data;
   },

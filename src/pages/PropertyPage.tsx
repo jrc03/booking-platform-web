@@ -4,6 +4,7 @@ import { MapPin, Users, Loader2, ArrowLeft, SearchX } from "lucide-react";
 import Button from "../components/ui/Button";
 import { useAuthStore } from "../store/authStore";
 import { useProperty } from "../hooks/useProperty";
+import { AvailabilityCalendar } from "../components/properties/AvailabilityCalendar";
 
 export const PropertyPage = () => {
   const { id } = useParams();
@@ -110,6 +111,7 @@ export const PropertyPage = () => {
               {property.description}
             </p>
           </div>
+          <AvailabilityCalendar propertyId={property.id} />
         </div>
         <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm h-fit sticky top-24 space-y-4">
           <div className="flex items-baseline gap-1">
