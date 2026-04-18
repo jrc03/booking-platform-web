@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import type { BookingResponseDto, PropertyResponseDto } from "../types/dtos";
 import { bookingService } from "../api/BookingService";
 import { propertyService } from "../api/propertyService";
+import { reviewService } from "../api/reviewService";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import ConfirmModal from "../components/ui/ConfirmModal";
+import ReviewModal from "../components/ui/ReviewModal";
 import {
   Clock,
   CheckCircle,
@@ -21,8 +23,12 @@ export const GuestProfile = () => {
   const [properties, setProperties] = useState<
     Record<string, PropertyResponseDto>
   >({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cancelId, setCancelId] = useState<string | null>(null);
+  const [reviewBooking, setReviewBooking] = useState<BookingResponseDto | null>(
+    null,
+  );
+  const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -74,6 +80,24 @@ export const GuestProfile = () => {
       );
     } catch (error) {
       toast.error(getApiErrorMessage(error, "Failed to complete booking."));
+    }
+  };
+
+  const handleReviewSubmit = async (rating: number, comment: string) => {
+    if (!reviewBooking) return;
+    setIsSubmittingReview(true);
+    try {
+      await reviewService.create({
+        bookingId: reviewBooking.id,
+        rating,
+        comment,
+      });
+      toast.success("Review submitted successfully!");
+      setReviewBooking(null);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to submit review."));
+    } finally {
+      setIsSubmittingReview(false);
     }
   };
 
@@ -183,12 +207,14 @@ export const GuestProfile = () => {
                   <div className="flex items-center gap-2 pt-1">
                     {booking.status === "Confirmed" && (
                       <>
-                        <button
-                          onClick={() => handleComplete(booking.id)}
-                          className="text-xs font-medium text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg transition-colors"
-                        >
-                          Mark as Completed
-                        </button>
+                        {new Date() >= new Date(booking.endDate) && (
+                          <button
+                            onClick={() => handleComplete(booking.id)}
+                            className="text-xs font-medium text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg transition-colors"
+                          >
+                            Mark as Completed
+                          </button>
+                        )}
                         <button
                           onClick={() => setCancelId(booking.id)}
                           className="text-xs font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors"
@@ -196,6 +222,14 @@ export const GuestProfile = () => {
                           Cancel
                         </button>
                       </>
+                    )}
+                    {booking.status === "Completed" && (
+                      <button
+                        onClick={() => setReviewBooking(booking)}
+                        className="text-xs font-medium text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        Leave a Review
+                      </button>
                     )}
                   </div>
                 </div>
@@ -212,6 +246,13 @@ export const GuestProfile = () => {
         confirmLabel="Cancel Booking"
         onConfirm={handleCancel}
         onCancel={() => setCancelId(null)}
+      />
+
+      <ReviewModal
+        isOpen={reviewBooking !== null}
+        isSubmitting={isSubmittingReview}
+        onConfirm={handleReviewSubmit}
+        onCancel={() => setReviewBooking(null)}
       />
     </div>
   );
