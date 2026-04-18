@@ -101,6 +101,7 @@ export interface ReviewResponseDto {
   id: Guid;
   bookingId: Guid;
   guestId: Guid;
+  guestFirstName: string;
   propertyId: Guid;
   rating: number;
   comment: string;
