@@ -5,6 +5,7 @@ import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import { bookingService } from "../api/BookingService";
 import { useProperty } from "../hooks/useProperty";
 import { PageHeader } from "../components/layout/PageHeader";
+import { AvailabilityCalendar } from "../components/properties/AvailabilityCalendar";
 import Button from "../components/ui/Button";
 import { CalendarDays } from "lucide-react";
 
@@ -103,6 +104,11 @@ export const BookingPage = () => {
             <span className="text-stone-400 font-light">/ night</span>
           </p>
         </div>
+      </div>
+
+      {/* Availability Reference Calendar */}
+      <div className="bg-white border border-stone-100 rounded-2xl shadow-sm p-6 mb-8 flex justify-center">
+        <AvailabilityCalendar propertyId={id!} />
       </div>
 
       {/* Date Selection */}

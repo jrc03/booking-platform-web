@@ -1,5 +1,6 @@
 import type {
   PropertyResponseDto,
+  PropertyReviewSummaryDto,
   UpsertPropertyRequestDto,
 } from "../types/dtos";
 import api from "./axios";
@@ -65,5 +66,14 @@ export const propertyService = {
       `/properties/${id}/unavailable-dates`,
     );
     return response.data;
+  },
+  getReviews: async (id: string): Promise<PropertyReviewSummaryDto> => {
+    const response = await api.get<PropertyReviewSummaryDto>(
+      `/properties/${id}/reviews`,
+    );
+    return response.data;
+  },
+  blockDates: async (id: string, payload: { startDate: string; endDate: string }): Promise<void> => {
+    await api.post(`/properties/${id}/block-dates`, payload);
   },
 };

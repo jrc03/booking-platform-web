@@ -14,6 +14,8 @@ import {
   type PropertyField,
 } from "../utils/propertyValidation";
 import { PageHeader } from "../components/layout/PageHeader";
+import { AvailabilityCalendar } from "../components/properties/AvailabilityCalendar";
+import { BlockDatesModal } from "../components/properties/BlockDatesModal";
 
 export const CreatePropertyPage = () => {
   const navigate = useNavigate();
@@ -25,6 +27,9 @@ export const CreatePropertyPage = () => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
+  const [isSubmittingBlock, setIsSubmittingBlock] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -71,6 +76,24 @@ export const CreatePropertyPage = () => {
 
       const objectUrls = selectedFiles.map((file) => URL.createObjectURL(file));
       setPreviewUrls(objectUrls);
+    }
+  };
+
+  const handleBlockDates = async (start: Date, end: Date) => {
+    if (!id) return;
+    setIsSubmittingBlock(true);
+    try {
+      await propertyService.blockDates(id, {
+        startDate: start.toISOString(),
+        endDate: end.toISOString()
+      });
+      toast.success("Dates blocked successfully!");
+      setRefreshTrigger(prev => prev + 1);
+      setIsBlockModalOpen(false);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to block dates"));
+    } finally {
+      setIsSubmittingBlock(false);
     }
   };
 
@@ -271,6 +294,37 @@ export const CreatePropertyPage = () => {
             </div>
           )}
         </div>
+        
+        {/* --- Manage Availability --- */}
+        {isEditMode && (
+          <div className="pt-4 border-t border-stone-100">
+            <h3 className="text-lg font-medium text-stone-900 mb-4">
+              Manage Availability
+            </h3>
+            <p className="text-sm text-stone-500 font-light mb-4">
+              Review your availability below. All booked and blocked dates appear in <span className="text-red-400 font-medium">red</span>.
+            </p>
+            
+            <div className="flex flex-col md:flex-row gap-8 items-start bg-stone-50 p-6 border border-stone-200 rounded-2xl">
+              <div className="bg-white p-2 rounded-xl shadow-sm border border-stone-200">
+                <AvailabilityCalendar propertyId={id!} refreshTrigger={refreshTrigger} />
+              </div>
+              
+              <div className="flex-1 space-y-4 w-full">
+                <div className="p-4 bg-white border border-stone-200 rounded-xl mt-12 md:mt-0">
+                  <h4 className="font-medium text-stone-900 mb-2">Block New Dates</h4>
+                  <p className="text-xs text-stone-500 font-light mb-4 leading-relaxed">
+                    Manually mark dates as unavailable. This will immediately prevent any guests from booking your property during this set period. We will register them in red directly on this calendar to let you know they are securely blocked.
+                  </p>
+                  <Button type="button" onClick={() => setIsBlockModalOpen(true)} className="w-full">
+                    Select Dates to Block
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="pt-6">
           <Button
             type="submit"
@@ -282,6 +336,13 @@ export const CreatePropertyPage = () => {
           </Button>
         </div>
       </form>
+      
+      <BlockDatesModal 
+        isOpen={isBlockModalOpen}
+        isSubmitting={isSubmittingBlock}
+        onConfirm={handleBlockDates}
+        onCancel={() => setIsBlockModalOpen(false)}
+      />
     </div>
   );
 };

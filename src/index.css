@@ -19,10 +19,10 @@ body {
 }
 
 .rdp-custom .rdp-disabled:not(.rdp-today) {
-    background-color: var(--color-stone-100);
-    color: var(--color-stone-400);
+    background-color: #fef2f2; /* Tailwind red-50 */
+    color: #f87171; /* Tailwind red-400 */
     text-decoration: line-through;
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 .rdp-custom .rdp-today {
