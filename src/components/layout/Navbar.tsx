@@ -12,6 +12,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { authService } from "../../api/authService";
 import { toast } from "sonner";
+import { NotificationBell } from "./NotificationBell";
 
 export const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuthStore();
@@ -81,6 +82,9 @@ export const Navbar = () => {
             </Link>
 
             <div className="h-4 w-px bg-stone-300 hidden sm:block mx-2"></div>
+            
+            <NotificationBell />
+
             {/* 👇 NEW DROPDOWN MENU STRUCUTRE 👇 */}
             <div className="relative" ref={dropdownRef}>
               <button

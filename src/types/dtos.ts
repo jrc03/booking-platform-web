@@ -57,8 +57,14 @@ export interface UpsertPropertyRequestDto {
   imageUrls: string[];
 }
 
+export interface BlockDatesRequestDto {
+  startDate: ISODate;
+  endDate: ISODate;
+}
+
 export interface PropertyResponseDto {
   id: Guid;
+  hostId: Guid;
   title: string;
   description: string;
   location: string;
@@ -93,6 +99,7 @@ export interface BookingResponseDto {
 // 4) Reviews
 export interface CreateReviewRequestDto {
   bookingId: Guid;
+  propertyId: Guid;
   rating: number; // 1-5 (validated in backend)
   comment: string;
 }
