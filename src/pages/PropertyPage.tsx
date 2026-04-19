@@ -5,6 +5,7 @@ import Button from "../components/ui/Button";
 import { useAuthStore } from "../store/authStore";
 import { useProperty } from "../hooks/useProperty";
 import { AvailabilityCalendar } from "../components/properties/AvailabilityCalendar";
+import { PropertyReviews } from "../components/properties/PropertyReviews";
 
 export const PropertyPage = () => {
   const { id } = useParams();
@@ -112,6 +113,7 @@ export const PropertyPage = () => {
             </p>
           </div>
           <AvailabilityCalendar propertyId={property.id} />
+          <PropertyReviews propertyId={property.id} />
         </div>
         <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm h-fit sticky top-24 space-y-4">
           <div className="flex items-baseline gap-1">
@@ -126,7 +128,7 @@ export const PropertyPage = () => {
                 Book Now
               </Button>
             </Link>
-          ) : (
+          ) : !isAuthenticated ? (
             <div className="text-center space-y-3 pt-2">
               <p className="text-sm text-stone-400 font-light">
                 Sign in to book this property
@@ -137,7 +139,7 @@ export const PropertyPage = () => {
                 </Button>
               </Link>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

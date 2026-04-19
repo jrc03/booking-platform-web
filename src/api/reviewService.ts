@@ -1,5 +1,5 @@
 import api from "./axios";
-import type { CreateReviewRequestDto, PropertyReviewSummaryDto } from "../types/dtos";
+import type { CreateReviewRequestDto, PropertyReviewSummaryDto, ReviewResponseDto } from "../types/dtos";
 
 export const reviewService = {
   getByProperty: async (propertyId: string): Promise<PropertyReviewSummaryDto> => {
@@ -7,7 +7,8 @@ export const reviewService = {
     return response.data;
   },
 
-  create: async (payload: CreateReviewRequestDto): Promise<void> => {
-    await api.post("/reviews", payload);
+  create: async (payload: CreateReviewRequestDto): Promise<ReviewResponseDto> => {
+    const response = await api.post<ReviewResponseDto>("/reviews", payload);
+    return response.data;
   },
 };

@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 interface ReviewCardProps {
   reviewerName: string;
   rating: number;
-  date: string; 
+  date: string;
   comment: string;
 }
 
@@ -41,7 +41,7 @@ export const ReviewCard = ({
             key={index}
             className={`w-4 h-4 ${
               index < rating
-                ? "fill-stone-900 text-stone-900" 
+                ? "fill-stone-900 text-stone-900"
                 : "fill-stone-200 text-stone-200"
             }`}
           />

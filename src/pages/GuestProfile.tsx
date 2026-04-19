@@ -89,6 +89,7 @@ export const GuestProfile = () => {
     try {
       await reviewService.create({
         bookingId: reviewBooking.id,
+        propertyId: reviewBooking.propertyId,
         rating,
         comment,
       });
